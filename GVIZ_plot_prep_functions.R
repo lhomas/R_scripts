@@ -8,13 +8,13 @@ coverage_GRange<-function(cov_file, chr = chrom, strt = start, nd = end) {
   cov_scores <- scan(file = cov_file)
   
   # Generate IRanges object to be used for ranges in GRanges object
-  cov_window <- seq(strt, nd-100, 100)
-  cov_width <- rep(100, length(cov_window))
+  cov_window <- seq(strt, nd-1000, 1000)
+  cov_width <- rep(1000, length(cov_window))
   cov_irange <- IRanges(c(cov_window), width=c(cov_width))
   
   # Create GRanges object 
   gr  <- GRanges(
-    seqnames = chrom, # All windows are on chr14
+    seqnames = chr,
     ranges = cov_irange, # Using IRanges object created above
     strand = "*", # Strand unimportant, using *
     Cov = cov_scores # Creating the metadata field to be plotted
@@ -27,7 +27,7 @@ coverage_GRange<-function(cov_file, chr = chrom, strt = start, nd = end) {
 
 # Creating function to generate GRanges object summarising mapping quality information
 ## This function takes as input a .tsv file generated from the alignment_stat_gen.sh script
-## Specficially it takes a list of average mapping quality values (1 entry per line) for 1000bp windows across a specified genomic region
+## Specficially it takes a list of average mapping quality values (1 entry per line) for 10000bp windows across a specified genomic region
 ## Rather tha showoing average mapping quality, this function checks to see if the average value for a window is above or below 57
 ## Greater than 57 is assigned 1, below is assigned 0
 ## It outputs GRanges object that can be visualised with GVIZ
@@ -45,7 +45,7 @@ mapq_GRange<-function(mapq_file, chr = chrom, strt = start, nd = end) {
   
   # Create GRanges object 
   gr  <- GRanges(
-    seqnames = chrom, # All windows are on chr14
+    seqnames = chr, # All windows are on chr14
     ranges = mapq_irange, # Using IRanges object created above
     strand = "*", # Strand unimportant, using *
     MAPQ = accessability # Creating the metadata field to be plotted
@@ -61,7 +61,7 @@ mapq_GRange<-function(mapq_file, chr = chrom, strt = start, nd = end) {
 ## This function only works for a single chromomse (provided as the chrom argument)
 ## It outputs GRanges object that can be visualised with GVIZ
 
-LOD_grange<-function(..., map) {
+LOD_grange<-function(..., map, chrom) {
   
   # Read provided parametric data tables into a list
   path_list <- list(...)
@@ -177,7 +177,7 @@ LOD_grange<-function(..., map) {
   LOD_IRange <- IRanges(start=IRange_start, width = 1)
   
   gr <- GRanges(
-    seqnames = chrom, # All windows are on chr14
+    seqnames = chrom,
     ranges = LOD_IRange,
     strand = "*",
     LOD = LODscores
